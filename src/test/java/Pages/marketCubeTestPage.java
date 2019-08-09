@@ -167,7 +167,6 @@ WebElement registrationMail;
         firstName.sendKeys( firstNameValue);
         String lastNameValue =getValueFromPropertyFile("testData","lastName");
         lastName.sendKeys(lastNameValue);
-
         emailField.sendKeys(emailId);
         String PhoneNumberValue=getValueFromPropertyFile("testData","PhoneNumber");
         phnoneNumber.sendKeys(PhoneNumberValue );
