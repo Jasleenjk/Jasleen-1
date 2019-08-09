@@ -1,5 +1,6 @@
 package Utilities;
 
+import net.thucydides.core.pages.PageObject;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
 import javax.naming.ConfigurationException;

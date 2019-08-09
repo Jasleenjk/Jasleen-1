@@ -2,23 +2,22 @@ package Pages;
 
 import Utilities.ConfigLoader;
 import Utilities.LoadProperties;
+import Utilities.RandomGenerator;
 import com.typesafe.config.Config;
+import net.serenitybdd.core.Serenity;
 import net.serenitybdd.core.annotations.findby.FindBy;
+import net.serenitybdd.core.pages.WebElementFacade;
 import net.thucydides.core.pages.PageObject;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
-import Utilities.ConfigLoader;
-import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 
 import java.util.Iterator;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import static Utilities.LoadProperties.getValueFromPropertyFile;
+
 
 public class marketCubeTestPage extends PageObject {
 
@@ -44,7 +43,7 @@ public class marketCubeTestPage extends PageObject {
     @FindBy(xpath = "//input[@id='lastName']")
     public WebElement lastName;
     @FindBy(xpath = "//input[@id='email']")
-    public WebElement emailField;
+    public WebElementFacade emailField;
     @FindBy(xpath = "//input[@id='phoneNumber']")
     public WebElement phnoneNumber;
     @FindBy(xpath = "//input[@id='brandName']")
@@ -93,9 +92,9 @@ WebElement registrationMail;
 @FindBy(xpath = "//p[text()='Vendor']")
         WebElement vendorLogout;
 
-    String emailId=getSaltString()+"@mailinator.com";
+   // String emailId=getSaltString()+"@mailinator.com";
 
-
+public String emailText;
 
 
     public static Config conf = ConfigLoader.load();
@@ -114,12 +113,12 @@ WebElement registrationMail;
     {
 
         waitFor(emailLoginField).withTimeoutOf(20, TimeUnit.SECONDS);
-        String emailLoginFieldValue=getValueFromPropertyFile("testData","emailLoginField");
+        String emailLoginFieldValue=LoadProperties.getValueFromPropertyFile("testData","emailLoginField");
         emailLoginField.sendKeys(emailLoginFieldValue);
 
 
         waitFor(passwordLoginField).withTimeoutOf(20,TimeUnit.SECONDS);
-        String passwordLoginFieldValue=getValueFromPropertyFile("testData","passwordLoginField");
+        String passwordLoginFieldValue=LoadProperties.getValueFromPropertyFile("testData","passwordLoginField");
         passwordLoginField.sendKeys(passwordLoginFieldValue);
 
 
@@ -130,12 +129,12 @@ WebElement registrationMail;
 
 
         waitFor(emailLoginField).withTimeoutOf(20, TimeUnit.SECONDS);
-        String emailLoginFieldValue=getValueFromPropertyFile("testData","emailLoginField");
+        String emailLoginFieldValue=LoadProperties.getValueFromPropertyFile("testData","emailLoginField");
         emailLoginField.sendKeys(emailLoginFieldValue);
 
 
         waitFor(passwordLoginField).withTimeoutOf(20,TimeUnit.SECONDS);
-        String passwordLoginFieldValue=getValueFromPropertyFile("testData","passwordLoginField");
+        String passwordLoginFieldValue=LoadProperties.getValueFromPropertyFile("testData","passwordLoginField");
         passwordLoginField.sendKeys(passwordLoginFieldValue);
 
 
@@ -163,22 +162,24 @@ WebElement registrationMail;
     public void userFillstheVendorForm()
     {
         waitABit(60);
-        String firstNameValue = getValueFromPropertyFile("testData", "firstName");
+        String firstNameValue = LoadProperties.getValueFromPropertyFile("testData", "firstName");
         firstName.sendKeys( firstNameValue);
-        String lastNameValue =getValueFromPropertyFile("testData","lastName");
+        String lastNameValue =LoadProperties.getValueFromPropertyFile("testData","lastName");
         lastName.sendKeys(lastNameValue);
-        emailField.sendKeys(emailId);
-        String PhoneNumberValue=getValueFromPropertyFile("testData","PhoneNumber");
+        Serenity.setSessionVariable("email").to("jasleenk" + RandomGenerator.randomInteger(3) + "@mailinator.com");
+        emailField.type(Serenity.sessionVariableCalled("email"));
+        emailText = emailField.getAttribute("value");
+        String PhoneNumberValue=LoadProperties.getValueFromPropertyFile("testData","PhoneNumber");
         phnoneNumber.sendKeys(PhoneNumberValue );
-        String brandNameValue=getValueFromPropertyFile("testData","brandName");
+        String brandNameValue=LoadProperties.getValueFromPropertyFile("testData","brandName");
         brandName.sendKeys(brandNameValue);
-        String streetAddressValue=getValueFromPropertyFile("testData","streetAddress");
+        String streetAddressValue=LoadProperties.getValueFromPropertyFile("testData","streetAddress");
         streetAddress.sendKeys(streetAddressValue);
-        String cityNameValue=getValueFromPropertyFile("testData","cityName");
+        String cityNameValue=LoadProperties.getValueFromPropertyFile("testData","cityName");
         cityName.sendKeys(cityNameValue);
-        String countryNameValue=getValueFromPropertyFile("testData","countryName");
+        String countryNameValue=LoadProperties.getValueFromPropertyFile("testData","countryName");
         countryName.sendKeys(countryNameValue);
-        String pinCodeValue=getValueFromPropertyFile("testData","pinCode");
+        String pinCodeValue=LoadProperties.getValueFromPropertyFile("testData","pinCode");
         pinCode.sendKeys(pinCodeValue);
         autoVerifyUnclick.click();
         submitBtn.click();
@@ -193,7 +194,7 @@ WebElement registrationMail;
     public void userOpensTheMail() {
 
         getDriver().get("https://www.mailinator.com/");
-        inboxField.sendKeys(emailId);
+        inboxField.sendKeys(emailText);
         goBtn.click();
 
     }
@@ -203,7 +204,8 @@ WebElement registrationMail;
 
         WebElement frame = getDriver().findElement(By.name("msg_body"));
         getDriver().switchTo().frame(frame);
-        verifyEmail.click();
+       verifyEmail.click();
+       waitABit(50);
         Set<String> tabs = getDriver().getWindowHandles();
         Iterator<String> it = tabs.iterator();
         String id1 = it.next();
@@ -230,13 +232,15 @@ WebElement registrationMail;
 
        String passwordText=passwordCopy.getText().substring(10);
 
-        System.out.println(passwordText);
 
+        Set<String> tabs = getDriver().getWindowHandles();
+        Iterator<String> it = tabs.iterator();
+        String id1 = it.next();
+        String id2 = it.next();
+        getDriver().switchTo().window(id2);
+        waitABit(6000);
 
-      getDriver().get("https://test.marketcube.io/");
-
-
-      waitFor(emailLoginField).withTimeoutOf(20,TimeUnit.SECONDS).sendKeys(emailId);
+        waitFor(emailLoginField).withTimeoutOf(20,TimeUnit.SECONDS).sendKeys(emailText);
       waitFor(passwordLoginField).withTimeoutOf(20,TimeUnit.SECONDS).sendKeys(passwordText);
       loginBtn.click();
 
@@ -244,16 +248,16 @@ WebElement registrationMail;
     public void userToChangeThePassword()
     {
         waitFor(newPassword).withTimeoutOf(50,TimeUnit.SECONDS);
-        String newPasswordValue=getValueFromPropertyFile("testData","newPassword");
+        String newPasswordValue=LoadProperties.getValueFromPropertyFile("testData","newPassword");
        newPassword.sendKeys(newPasswordValue);
-String confirmPasswordValue=getValueFromPropertyFile("testData","confirmPassword");
+String confirmPasswordValue=LoadProperties.getValueFromPropertyFile("testData","confirmPassword");
 confirmNewPassword.sendKeys(confirmPasswordValue);
     submitBtnforNewPassword.click();}
     public void userLoginWithNewPassword()
     {
 
-        waitFor(emailLoginField).withTimeoutOf(20,TimeUnit.SECONDS).sendKeys(emailId);
-        String confirmPasswordValue=getValueFromPropertyFile("testData","confirmPassword");
+        waitFor(emailLoginField).withTimeoutOf(20,TimeUnit.SECONDS).sendKeys(emailText);
+        String confirmPasswordValue=LoadProperties.getValueFromPropertyFile("testData","confirmPassword");
 
         passwordLoginField.sendKeys(confirmPasswordValue);
         loginBtn.click();
@@ -268,29 +272,27 @@ confirmNewPassword.sendKeys(confirmPasswordValue);
         waitFor(logoutBtn).withTimeoutOf(20,TimeUnit.SECONDS).click();
 
 
-
     }
 
     public void userCreateAUserWhichIsAlreadyRegistered()
     {
         waitABit(60);
-        String firstNameValue = getValueFromPropertyFile("testData", "firstName");
+        String firstNameValue = LoadProperties.getValueFromPropertyFile("testData", "firstName");
         firstName.sendKeys( firstNameValue);
-        String lastNameValue =getValueFromPropertyFile("testData","lastName");
+        String lastNameValue =LoadProperties.getValueFromPropertyFile("testData","lastName");
         lastName.sendKeys(lastNameValue);
-
         emailField.sendKeys("ty@mailinator.com");
-        String PhoneNumberValue=getValueFromPropertyFile("testData","PhoneNumber");
+        String PhoneNumberValue=LoadProperties.getValueFromPropertyFile("testData","PhoneNumber");
         phnoneNumber.sendKeys(PhoneNumberValue );
-        String brandNameValue=getValueFromPropertyFile("testData","brandName");
+        String brandNameValue=LoadProperties.getValueFromPropertyFile("testData","brandName");
         brandName.sendKeys(brandNameValue);
-        String streetAddressValue=getValueFromPropertyFile("testData","streetAddress");
+        String streetAddressValue=LoadProperties.getValueFromPropertyFile("testData","streetAddress");
         streetAddress.sendKeys(streetAddressValue);
-        String cityNameValue=getValueFromPropertyFile("testData","cityName");
+        String cityNameValue=LoadProperties.getValueFromPropertyFile("testData","cityName");
         cityName.sendKeys(cityNameValue);
-        String countryNameValue=getValueFromPropertyFile("testData","countryName");
+        String countryNameValue=LoadProperties.getValueFromPropertyFile("testData","countryName");
         countryName.sendKeys(countryNameValue);
-        String pinCodeValue=getValueFromPropertyFile("testData","pinCode");
+        String pinCodeValue=LoadProperties.getValueFromPropertyFile("testData","pinCode");
         pinCode.sendKeys(pinCodeValue);
         autoVerifyUnclick.click();
         submitBtn.click();
@@ -302,35 +304,6 @@ public void userVerifyThatUserIsAlredyRegistered()
     String emailAlreadyRegistered=alreadyRegistered.getText();
             Assert.assertEquals("Already registered email.",emailAlreadyRegistered);
 }
-
-//public void userEnterSellerEmail()
-//{
-//
-//    waitFor(emailLoginField).withTimeoutOf(20, TimeUnit.SECONDS);
-//    String emailLoginFieldValue=getValueFromPropertyFile("testData","emailLoginField");
-//    emailLoginField.sendKeys(emailLoginFieldValue);
-//
-//
-//    waitFor(passwordLoginField).withTimeoutOf(20,TimeUnit.SECONDS);
-//    String passwordLoginFieldValue=getValueFromPropertyFile("testData","passwordLoginField");
-//    passwordLoginField.sendKeys(passwordLoginFieldValue);
-//
-//
-//}
-
-
-    protected String getSaltString() {
-        String SALTCHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
-        StringBuilder salt = new StringBuilder();
-        Random rnd = new Random();
-        while (salt.length() < 10) { // length of the random string.
-            int index = (int) (rnd.nextFloat() * SALTCHARS.length());
-            salt.append(SALTCHARS.charAt(index));
-        }
-        String saltStr = salt.toString();
-        return saltStr;
-
-    }
 
 
 }

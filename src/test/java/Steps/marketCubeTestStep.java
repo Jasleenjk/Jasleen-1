@@ -9,8 +9,9 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import Pages.marketCubeTestPage;
 import Utilities.ConfigLoader;
+import net.thucydides.core.pages.PageObject;
 
-public class marketCubeTestStep {
+public class marketCubeTestStep extends PageObject {
 
     public static Config conf= ConfigLoader.load();
     marketCubeTestPage pageTestObj;
@@ -29,18 +30,6 @@ public class marketCubeTestStep {
 
     }
 
-
-    @Then("^User redirects to Dashboard screen$")
-    public void userRedirectsToDashboardScreen() {
-
-
-    }
-
-    @Given("^User is at Dashboard screen$")
-    public void userIsAtDashboardScreen() {
-        
-    }
-
     @When("^User selects vendor from the menu and select creation of vendor using forms$")
     public void userSelectsVendorFromTheMenuAndSelectCreationOfVendorUsingForms() {
         pageTestObj.userSelectsVendorForm();
@@ -50,12 +39,6 @@ public class marketCubeTestStep {
     @And("^Fill the Vendor details$")
     public void fillTheVendorDetails() {
         pageTestObj.userFillstheVendorForm();
-        
-    }
-
-    @Then("^User should be registered successfully$")
-    public void userShouldBeRegisteredSuccessfully() {
-
         
     }
 
@@ -89,11 +72,6 @@ public class marketCubeTestStep {
         pageTestObj.assertThatUserIsOnDashBoard();
     }
 
-    @Then("^User verify the vendor$")
-    public void userVerifyTheVendor() {
-
-    }
-
     @And("^Fill the form with already registered email$")
     public void fillTheFormWithAlreadyRegisteredEmail() {
         pageTestObj.userCreateAUserWhichIsAlreadyRegistered();
@@ -107,32 +85,8 @@ public class marketCubeTestStep {
 
     }
 
-    @When("^User selects vendor from the menu and select creation of vendor with already registered email$")
-    public void userSelectsVendorFromTheMenuAndSelectCreationOfVendorWithAlreadyRegisteredEmail() {
 
 
-    }
-
-//    @When("^User enters the  seller email and password$")
-//    public void userEntersTheSellerEmailAndPassword() {
-//
-//
-//        pageTestObj.userEnterSellerEmail();
-//        pageTestObj.userClickOnLoginBtn();
-//
-//    }
-
-    @Given("^User is at market cube login page$")
-    public void userIsAtMarketCubeLoginPage() {
-        pageTestObj.userIsOnMarketCubeLogin();
-
-    }
-
-    @When("^User enters the seller email and password$")
-    public void userEntersTheSellerEmailAndPassword() {
-        pageTestObj.userEnterSellerEmail();
-        pageTestObj.userClickOnLoginBtn();
-    }
 }
 
 
