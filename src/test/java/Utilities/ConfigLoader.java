@@ -2,6 +2,7 @@ package Utilities;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
+import net.thucydides.core.pages.PageObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
