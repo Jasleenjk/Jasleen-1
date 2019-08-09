@@ -1,7 +1,5 @@
-@smoke
+@TaskProvided
 Feature:  Market cube
-
-
   Scenario:  Create vendor using form
     Given User is at market cube site
     When User enters the email and password
